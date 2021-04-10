@@ -44,7 +44,24 @@ public class Util {
 		// implement: read the descriptions above
 		boolean cond = false;
 
+		BigInteger size = Hash.addressSize();
 		
+		if (id.compareTo(lower) >= 0 && upper.compareTo(id) >= 0) {			
+			cond =  true;
+		}else  {
+			if(lower.compareTo(upper) > 0) {
+				BigInteger newUpper = upper.add(size);				
+				if (id.compareTo(lower) >= 0 && newUpper.compareTo(id) >= 0) {	
+					cond = true;
+				}else {
+				BigInteger newId = id.add(size);			
+				if (newId.compareTo(lower)>=0 && newUpper.compareTo(newId) >= 0) {	
+					System.out.println(newUpper.compareTo(newId));
+					cond = true;
+				}
+				}
+			}							
+		}		
 		return cond;
 	}
 	

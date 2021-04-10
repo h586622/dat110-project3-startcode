@@ -56,6 +56,14 @@ public class FileManager {
 	 	
 		// implement
 		
+		for (int i = 0; i< numReplicas; i++) {
+			
+			String filenameNew = filename + i;
+			hash = Hash.hashOf(filenameNew);
+			replicafiles[i] = hash;
+			
+		}
+		
 		// set a loop where size = numReplicas
 		
 		// replicate by adding the index to filename
@@ -74,6 +82,8 @@ public class FileManager {
     public int distributeReplicastoPeers() throws RemoteException {
     	int counter = 0;
     	
+    	
+    	
     	// Task1: Given a filename, make replicas and distribute them to all active peers such that: pred < replica <= peer
     	
     	// Task2: assign a replica as the primary for this file. Hint, see the slide (project 3) on Canvas
@@ -89,7 +99,7 @@ public class FileManager {
     	// call the saveFileContent() on the successor
     	
     	// increment counter
-    	
+    	counter++;
     		
 		return counter;
     }
