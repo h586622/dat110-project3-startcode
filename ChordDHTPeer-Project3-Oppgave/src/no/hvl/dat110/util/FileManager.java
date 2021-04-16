@@ -15,6 +15,7 @@ import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
 
@@ -82,15 +83,27 @@ public class FileManager {
     public int distributeReplicastoPeers() throws RemoteException {
     	int counter = 0;
     	
+    	createReplicaFiles();
     	
-    	
-    	// Task1: Given a filename, make replicas and distribute them to all active peers such that: pred < replica <= peer
+    	// Task1: Given a filename, make replicas and distribute them to all active peers such that: pred < replica <= peer    	
     	
     	// Task2: assign a replica as the primary for this file. Hint, see the slide (project 3) on Canvas
     	
     	// create replicas of the filename
     	
+    	Random rnd = new Random();
+    	int index = rnd.nextInt(Util.numReplicas -1);
+    	
 		// iterate over the replicas
+    	
+    	for (int i = 0; i< replicafiles.length; i++) {
+    		NodeInterface succ = chordnode.findSuccessor(replicafiles[i]);
+    		succ.addKey(replicafiles[i]);
+    		
+    		boolean primary = (counter == index);
+    		
+    		succ.saveFileContent(filename, succ.getNodeID(), bytesOfFile, primary);
+    	}
     	
     	// for each replica, find its successor by performing findSuccessor(replica)
     	
@@ -118,7 +131,14 @@ public class FileManager {
 		
 		// generate the N replicas from the filename by calling createReplicaFiles()
 		
+		createReplicaFiles();
+		
 		// it means, iterate over the replicas of the file
+		
+		for (int i = 0; i<replicafiles.length;i++) {
+			NodeInterface succ = chordnode.findSuccessor(replicafiles[i]);
+			succinfo.add(succ.getFilesMetadata(succ.getNodeID()));
+		}
 		
 		// for each replica, do findSuccessor(replica) that returns successor s.
 		
@@ -140,6 +160,30 @@ public class FileManager {
 		// Task: Given all the active peers of a file (activeNodesforFile()), find which is holding the primary copy
 		
 		// iterate over the activeNodesforFile
+		NodeInterface returVerdi = null;
+		Message thisOne = null;
+		
+		Set<Message> activeNodes;
+		try {
+			activeNodes = requestActiveNodesForFile(filename);
+			for (Iterator<Message> iterator = activeNodes.iterator(); iterator.hasNext() ; ) {
+				Message actual = iterator.next();
+				if (actual.isPrimaryServer() ) {	
+					thisOne = actual;
+				returVerdi = Util.getProcessStub(thisOne.getNodeIP(),thisOne.getPort());
+				}
+			}
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		
+		 
+		
+		
+		
+		
+		
+		
 		
 		// for each active peer (saved as Message)
 		
@@ -147,7 +191,7 @@ public class FileManager {
 		
 		// return the primary
 		
-		return null; 
+		return returVerdi; 
 	}
 	
     /**

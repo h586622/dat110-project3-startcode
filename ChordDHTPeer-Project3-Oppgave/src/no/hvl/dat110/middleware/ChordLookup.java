@@ -27,37 +27,26 @@ public class ChordLookup {
 	
 	public NodeInterface findSuccessor(BigInteger key) throws RemoteException {
 		
-		// ask this node to find the successor of key
-		
-		NodeInterface successor = this.node.getSuccessor();
-		
-		// get the successor of the node
-		
-		NodeInterface stub =  Util.getProcessStub(successor.getNodeName(),successor.getPort());
-		
-		// get the stub for this successor (Util.getProcessStub())
-		
-		BigInteger nodePlusOne = stub.getNodeID().add(BigInteger.valueOf(1));
-		
-		boolean check = Util.computeLogic(key, nodePlusOne, successor.getNodeID());
-		
-		// check that key is a member of the set {nodeid+1,...,succID} i.e. (nodeid+1 <= key <= succID) using the ComputeLogic
-		
+		// ask this node to find the successor of key		
+		NodeInterface successor = this.node.getSuccessor(); 	
+		// get the successor of the node		
+		NodeInterface stub =  Util.getProcessStub(successor.getNodeName(),successor.getPort());		
+		// get the stub for this successor (Util.getProcessStub())		
+		BigInteger nodePlusOne = node.getNodeID().add(BigInteger.valueOf(1));		
+		boolean check = Util.computeLogic(key, nodePlusOne, stub.getNodeID());		
+		// check that key is a member of the set {nodeid+1,...,succID} i.e. (nodeid+1 <= key <= succID) using the ComputeLogic		
 		if (check)
-			return successor;
-		
-		// if logic returns true, then return the successor
-		
-		if (!check) {
+			return stub;
+		else {
 			NodeInterface highest_pred = findHighestPredecessor(key);
 			return highest_pred.findSuccessor(key);
-		}
-			
+		}			
+		// if logic returns true, then return the successor
+					
 		// if logic returns false; call findHighestPredecessor(key)
 		
 		// do return highest_pred.findSuccessor(key) - This is a recursive call until logic returns true
-				
-		return null;					
+									
 	}
 	
 	/**
@@ -83,15 +72,15 @@ public class ChordLookup {
 			if( Util.computeLogic(nodeInterface.getNodeID(), this.node.getNodeID().add(one), key.subtract(one))){
 				return nodeInterface;
 			}
-		}
-		
+		}	
 		// for each finger, obtain a stub from the registry
 		
 		// check that finger is a member of the set {nodeID+1,...,ID-1} i.e. (nodeID+1 <= finger <= key-1) using the ComputeLogic
 		
-		// if logic returns true, then return the finger (means finger is the closest to key)
+		// if logic returns true, then return the finger (means finger is the closest to key)	
+		return (NodeInterface) node;	
 		
-		return node;			
+		
 	}
 	
 	public void copyKeysFromSuccessor(NodeInterface succ) {

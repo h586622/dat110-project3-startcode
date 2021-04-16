@@ -48,28 +48,9 @@ public class Hash {
 	
 	public static BigInteger addressSize() {
 		
-		// Task: compute the address size of MD5
-		
-		MessageDigest digest = null;
-        try {
-            digest = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-		
-		// get the digest length
-		
-		int digestLength = digest.getDigestLength();
-		
-		// compute the number of bits = digest length * 8
-		
-		int bits = digestLength * 8;
-		
-		// compute the address size = 2 ^ number of bits
-		
 		BigInteger two = new BigInteger("2");
 		
-		BigInteger size = (two.pow(bits));
+		BigInteger size = (two.pow(bitSize()));
 		
 		// return the address size
 		
@@ -89,7 +70,9 @@ public class Hash {
 		
 		// find the digest length
 		
-		return digestlen*8;
+		int bitSize = digestlen*8;
+		
+		return bitSize;
 	}
 	
 	public static String toHex(byte[] digest) {
